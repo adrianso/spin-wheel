@@ -1,13 +1,13 @@
 import * as util from './util.js';
-import {Defaults} from './constants.js';
+import { Defaults } from './constants.js';
 
 export class Item {
-
   constructor(wheel, props = {}) {
-
     // Validate params.
-    if (!util.isObject(wheel)) throw new Error('wheel must be an instance of Wheel'); // Ideally we would use instanceof, however importing the Wheel class would create a circular ref.
-    if (!util.isObject(props) && props !== null) throw new Error('props must be an Object or null');
+    if (!util.isObject(wheel))
+      throw new Error('wheel must be an instance of Wheel'); // Ideally we would use instanceof, however importing the Wheel class would create a circular ref.
+    if (!util.isObject(props) && props !== null)
+      throw new Error('props must be an Object or null');
 
     this._wheel = wheel;
 
@@ -22,7 +22,6 @@ export class Item {
     } else {
       this.init(Defaults.item);
     }
-
   }
 
   /**
@@ -71,7 +70,7 @@ export class Item {
     if (typeof val === 'string') {
       img = new Image();
       img.src = val;
-      img.onload = e => this._wheel.refresh();
+      img.onload = (e) => this._wheel.refresh();
     } else {
       img = Defaults.item.image;
     }
@@ -207,7 +206,7 @@ export class Item {
    * Get the 0-based index of this item.
    */
   getIndex() {
-    const index = this._wheel.items.findIndex(i => i === this);
+    const index = this._wheel.items.findIndex((i) => i === this);
     if (index === -1) throw new Error('Item not found in parent Wheel');
     return index;
   }
@@ -216,22 +215,22 @@ export class Item {
    * Get the angle (in degrees) that this item ends at (exclusive), ignoring the current `rotation` of the wheel.
    */
   getCenterAngle() {
-    const angle = this._wheel.getItemAngles()[ this.getIndex() ];
-    return angle.start + ((angle.end - angle.start) / 2);
+    const angle = this._wheel.getItemAngles()[this.getIndex()];
+    return angle.start + (angle.end - angle.start) / 2;
   }
 
   /**
    * Get the angle (in degrees) that this item starts at (inclusive), ignoring the current `rotation` of the wheel.
    */
   getStartAngle() {
-    return this._wheel.getItemAngles()[ this.getIndex() ].start;
+    return this._wheel.getItemAngles()[this.getIndex()].start;
   }
 
   /**
    * Get the angle (in degrees) that this item ends at (inclusive), ignoring the current `rotation` of the wheel.
    */
   getEndAngle() {
-    return this._wheel.getItemAngles()[ this.getIndex() ].end;
+    return this._wheel.getItemAngles()[this.getIndex()].end;
   }
 
   /**
@@ -240,5 +239,4 @@ export class Item {
   getRandomAngle() {
     return util.getRandomFloat(this.getStartAngle(), this.getEndAngle());
   }
-
 }

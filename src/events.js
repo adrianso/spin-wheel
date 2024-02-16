@@ -1,9 +1,8 @@
 export function register(wheel = {}) {
-
   registerPointerEvents(wheel);
 
   // Listen for when the window is resized.
-  wheel._handler_onResize = e => wheel.resize(e);
+  wheel._handler_onResize = (e) => wheel.resize(e);
   window.addEventListener('resize', wheel._handler_onResize);
 
   // Listen for when window.devicePixelRatio changes.
@@ -12,8 +11,14 @@ export function register(wheel = {}) {
   // and so does Firefox 117 but sometimes it raises it twice (shrug).
   // However Safari 16.3 doesn't, hence we need to monitor this separately.
   const listenForDevicePixelRatioChange = () => {
-    wheel._mediaQueryList = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
-    wheel._mediaQueryList.addEventListener('change', wheel._handler_onDevicePixelRatioChange, { once: true });
+    wheel._mediaQueryList = window.matchMedia(
+      `(resolution: ${window.devicePixelRatio}dppx)`,
+    );
+    wheel._mediaQueryList.addEventListener(
+      'change',
+      wheel._handler_onDevicePixelRatioChange,
+      { once: true },
+    );
   };
   wheel._handler_onDevicePixelRatioChange = () => {
     wheel.resize();
@@ -23,21 +28,28 @@ export function register(wheel = {}) {
 }
 
 export function unregister(wheel = {}) {
-
   const canvas = wheel.canvas;
 
   if ('PointerEvent' in window) {
     canvas.removeEventListener('pointerdown', wheel._handler_onPointerDown);
-    canvas.removeEventListener('pointermove', wheel._handler_onPointerMoveRefreshCursor);
+    canvas.removeEventListener(
+      'pointermove',
+      wheel._handler_onPointerMoveRefreshCursor,
+    );
   } else {
     canvas.removeEventListener('touchstart', wheel._handler_onTouchStart);
     canvas.removeEventListener('mousedown', wheel._handler_onMouseDown);
-    canvas.removeEventListener('mousemove', wheel._handler_onMouseMoveRefreshCursor);
+    canvas.removeEventListener(
+      'mousemove',
+      wheel._handler_onMouseMoveRefreshCursor,
+    );
   }
 
   window.removeEventListener('resize', wheel._handler_onResize);
-  wheel._mediaQueryList.removeEventListener('change', wheel._handler_onDevicePixelRatioChange);
-
+  wheel._mediaQueryList.removeEventListener(
+    'change',
+    wheel._handler_onDevicePixelRatioChange,
+  );
 }
 
 function registerPointerEvents(wheel = {}) {
@@ -64,7 +76,6 @@ function registerPointerEvents(wheel = {}) {
   };
 
   wheel._handler_onPointerDown = (e = {}) => {
-
     const point = {
       x: e.clientX,
       y: e.clientY,
@@ -98,11 +109,9 @@ function registerPointerEvents(wheel = {}) {
       canvas.removeEventListener('pointerout', onPointerUp);
       wheel.dragEnd();
     }
-
   };
 
   wheel._handler_onMouseDown = (e = {}) => {
-
     const point = {
       x: e.clientX,
       y: e.clientY,
@@ -129,11 +138,9 @@ function registerPointerEvents(wheel = {}) {
       document.removeEventListener('mouseup', onMouseUp);
       wheel.dragEnd();
     }
-
   };
 
   wheel._handler_onTouchStart = (e = {}) => {
-
     const point = {
       x: e.targetTouches[0].clientX,
       y: e.targetTouches[0].clientY,
@@ -163,16 +170,20 @@ function registerPointerEvents(wheel = {}) {
       canvas.removeEventListener('touchcancel', onTouchEnd);
       wheel.dragEnd();
     }
-
   };
 
   if ('PointerEvent' in window) {
     canvas.addEventListener('pointerdown', wheel._handler_onPointerDown);
-    canvas.addEventListener('pointermove', wheel._handler_onPointerMoveRefreshCursor);
+    canvas.addEventListener(
+      'pointermove',
+      wheel._handler_onPointerMoveRefreshCursor,
+    );
   } else {
     canvas.addEventListener('touchstart', wheel._handler_onTouchStart);
     canvas.addEventListener('mousedown', wheel._handler_onMouseDown);
-    canvas.addEventListener('mousemove', wheel._handler_onMouseMoveRefreshCursor);
+    canvas.addEventListener(
+      'mousemove',
+      wheel._handler_onMouseMoveRefreshCursor,
+    );
   }
-
 }
