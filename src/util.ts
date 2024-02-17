@@ -27,7 +27,11 @@ export function degRad(degrees = 0) {
  * Example: `(0, 359, 1) == true`
  * Example: `(0, 1, 2) == false`
  */
-export function isAngleBetween(angle, arcStart, arcEnd) {
+export function isAngleBetween(
+  angle: number,
+  arcStart: number,
+  arcEnd: number,
+) {
   if (arcStart < arcEnd) return arcStart <= angle && angle < arcEnd;
   return arcStart <= angle || angle < arcEnd;
 }
@@ -50,7 +54,12 @@ export function aveArray(array = []) {
  * Calculate the largest font size that `text` can have without exceeding `maxWidth`.
  * Won't work unless `fontFamily` has been loaded.
  */
-export function getFontSizeToFit(text, fontFamily, maxWidth, canvasContext) {
+export function getFontSizeToFit(
+  text: string,
+  fontFamily: string,
+  maxWidth: number,
+  canvasContext: CanvasRenderingContext2D,
+) {
   canvasContext.save();
   canvasContext.font = `1px ${fontFamily}`;
   const w = canvasContext.measureText(text).width;
@@ -63,7 +72,12 @@ export function getFontSizeToFit(text, fontFamily, maxWidth, canvasContext) {
  * cx, cy is circle center.
  * radius is circle radius.
  */
-export function isPointInCircle(point = { x: 0, y: 0 }, cx, cy, radius) {
+export function isPointInCircle(
+  point = { x: 0, y: 0 },
+  cx: number,
+  cy: number,
+  radius: number,
+) {
   const distanceSquared = (point.x - cx) ** 2 + (point.y - cy) ** 2;
   return distanceSquared <= radius ** 2;
 }
@@ -73,8 +87,8 @@ export function isPointInCircle(point = { x: 0, y: 0 }, cx, cy, radius) {
  */
 export function translateXYToElement(
   point = { x: 0, y: 0 },
-  element = {},
-  devicePixelRatio = 1,
+  element: HTMLCanvasElement,
+  devicePixelRatio: number = 1,
 ) {
   const rect = element.getBoundingClientRect();
   return {
@@ -83,14 +97,19 @@ export function translateXYToElement(
   };
 }
 
-export function getMouseButtonsPressed(event = {}) {
+export function getMouseButtonsPressed(event: { buttons: number }) {
   return [1, 2, 4, 8, 16].filter((i) => event.buttons & i);
 }
 
 /**
  * Source: https://stackoverflow.com/a/47653643/737393
  */
-export function getAngle(originX, originY, targetX, targetY) {
+export function getAngle(
+  originX: number,
+  originY: number,
+  targetX: number,
+  targetY: number,
+) {
   const dx = originX - targetX;
   const dy = originY - targetY;
 
@@ -163,24 +182,30 @@ export function calcWheelRotationForTargetAngle(
   return currentRotation + angle;
 }
 
-export function isObject(v) {
+export function isObject(v: unknown) {
   return typeof v === 'object' && !Array.isArray(v) && v !== null;
 }
 
-export function isNumber(n) {
+export function isNumber(n: unknown) {
   return typeof n === 'number' && !Number.isNaN(n);
 }
 
-export function setProp({
+export function setProp<T>({
   val,
   isValid,
   errorMessage,
   defaultValue,
-  action = null,
+  action,
+}: {
+  val: T | undefined;
+  isValid: boolean;
+  errorMessage: string;
+  defaultValue: T;
+  action?: () => T;
 }) {
   if (isValid) {
-    return action ? action() : val;
-  } else if (val === undefined) {
+    return action ? action() : !val ? defaultValue : val;
+  } else if (!val) {
     return defaultValue;
   }
   throw new Error(errorMessage);
@@ -189,7 +214,7 @@ export function setProp({
 /**
  * Return true if image has loaded.
  */
-export function isImageLoaded(image) {
+export function isImageLoaded(image: HTMLImageElement) {
   // We can detect a broken image (didn't load) by checking the natural width/height.
   return (
     image &&
@@ -206,6 +231,6 @@ export function fixFloat(f = 0) {
 /**
  * Easing function.
  */
-export function easeSinOut(n) {
+export function easeSinOut(n: number) {
   return Math.sin((n * Math.PI) / 2);
 }

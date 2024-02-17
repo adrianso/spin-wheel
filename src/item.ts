@@ -1,21 +1,44 @@
 import * as util from './util.js';
 import { Defaults } from './constants.js';
+import { Wheel } from './wheel.js';
+
+type Props = {
+  backgroundColor: string | null;
+  image: HTMLImageElement | null;
+  imageOpacity: number;
+  imageRadius: number;
+  imageRotation: number;
+  imageScale: number;
+  label: string;
+  labelColor: string | null;
+  value: string | null;
+  weight: number;
+};
 
 export class Item {
-  constructor(wheel, props = {}) {
+  private _wheel: Wheel;
+  private _backgroundColor: string | null = Defaults.item.backgroundColor;
+  private _image: HTMLImageElement | null = Defaults.item.image;
+  private _imageOpacity: number = Defaults.item.imageOpacity;
+  private _imageRadius: number = Defaults.item.imageRadius;
+  private _imageRotation: number = Defaults.item.imageRotation;
+  private _imageScale: number = Defaults.item.imageScale;
+  private _label: string = Defaults.item.label;
+  private _labelColor: string | null = Defaults.item.labelColor;
+  private _value: string | null = Defaults.item.value;
+  private _weight: number = Defaults.item.weight;
+  public path: Path2D | undefined;
+
+  constructor(wheel: Wheel, props: Partial<Props>) {
     // Validate params.
-    if (!util.isObject(wheel))
+    if (!util.isObject(wheel)) {
       throw new Error('wheel must be an instance of Wheel'); // Ideally we would use instanceof, however importing the Wheel class would create a circular ref.
-    if (!util.isObject(props) && props !== null)
+    }
+    if (!util.isObject(props) && props !== null) {
       throw new Error('props must be an Object or null');
+    }
 
     this._wheel = wheel;
-
-    // Assign default values.
-    // This avoids null exceptions when we initalise each property one-by-one in `init()`.
-    for (const i of Object.keys(Defaults.item)) {
-      this['_' + i] = Defaults.item[i];
-    }
 
     if (props) {
       this.init(props);
@@ -27,7 +50,7 @@ export class Item {
   /**
    * Initialise all properties.
    */
-  init(props = {}) {
+  init(props: Partial<Props>) {
     this.backgroundColor = props.backgroundColor;
     this.image = props.image;
     this.imageOpacity = props.imageOpacity;
@@ -45,10 +68,10 @@ export class Item {
    * When `null`, the actual color rendered will fall back to `Wheel.itemBackgroundColors`.
    * Example: `'#fff'`.
    */
-  get backgroundColor() {
+  get backgroundColor(): string | null {
     return this._backgroundColor;
   }
-  set backgroundColor(val) {
+  set backgroundColor(val: string | null | undefined) {
     if (typeof val === 'string') {
       this._backgroundColor = val;
     } else {
@@ -62,10 +85,10 @@ export class Item {
    * Any part of the image that extends outside the item will be clipped.
    * The image will be drawn over the top of `Item.backgroundColor`.
    */
-  get image() {
+  get image(): HTMLImageElement | null {
     return this._image;
   }
-  set image(val) {
+  set image(val: string | HTMLImageElement | null | undefined) {
     let img;
     if (typeof val === 'string') {
       img = new Image();
@@ -82,10 +105,10 @@ export class Item {
    * The opacity (as a percent) of `Item.image`.
    * Useful if you want to fade the image to make the item's label stand out.
    */
-  get imageOpacity() {
+  get imageOpacity(): number {
     return this._imageOpacity;
   }
-  set imageOpacity(val) {
+  set imageOpacity(val: number | undefined) {
     if (typeof val === 'number') {
       this._imageOpacity = val;
     } else {
@@ -97,10 +120,10 @@ export class Item {
   /**
    * The point along the radius (as a percent, starting from the center of the wheel) to draw the center of `Item.image`.
    */
-  get imageRadius() {
+  get imageRadius(): number {
     return this._imageRadius;
   }
-  set imageRadius(val) {
+  set imageRadius(val: number | undefined) {
     if (typeof val === 'number') {
       this._imageRadius = val;
     } else {
@@ -112,10 +135,10 @@ export class Item {
   /**
    * The rotation (angle in degrees) of `Item.image`.
    */
-  get imageRotation() {
+  get imageRotation(): number {
     return this._imageRotation;
   }
-  set imageRotation(val) {
+  set imageRotation(val: number | undefined) {
     if (typeof val === 'number') {
       this._imageRotation = val;
     } else {
@@ -127,10 +150,10 @@ export class Item {
   /**
    * The scale (as a percent) to resize `Item.image`.
    */
-  get imageScale() {
+  get imageScale(): number {
     return this._imageScale;
   }
-  set imageScale(val) {
+  set imageScale(val: number | undefined) {
     if (typeof val === 'number') {
       this._imageScale = val;
     } else {
@@ -142,10 +165,10 @@ export class Item {
   /**
    * The text that will be drawn on the item.
    */
-  get label() {
+  get label(): string {
     return this._label;
   }
-  set label(val) {
+  set label(val: string | undefined) {
     if (typeof val === 'string') {
       this._label = val;
     } else {
@@ -159,10 +182,10 @@ export class Item {
    * When `null`, the actual color rendered will fall back to `Wheel.itemLabelColors`.
    * Example: `'#000'`.
    */
-  get labelColor() {
+  get labelColor(): string | null {
     return this._labelColor;
   }
-  set labelColor(val) {
+  set labelColor(val: string | null | undefined) {
     if (typeof val === 'string') {
       this._labelColor = val;
     } else {
@@ -175,11 +198,11 @@ export class Item {
    * Some value that has meaning to your application.
    * For example, a reference to the object representing the item on the wheel, or a database id.
    */
-  get value() {
+  get value(): string | null {
     return this._value;
   }
-  set value(val) {
-    if (val !== undefined) {
+  set value(val: string | null | undefined) {
+    if (!!val) {
       this._value = val;
     } else {
       this._value = Defaults.item.value;
@@ -191,10 +214,10 @@ export class Item {
    * For example, if you have 2 items where `item[0]` has a weight of `1` and `item[1]` has a weight of `2`,
    * then `item[0]` will take up 1/3 of the space on the wheel.
    */
-  get weight() {
+  get weight(): number {
     return this._weight;
   }
-  set weight(val) {
+  set weight(val: number | undefined) {
     if (typeof val === 'number') {
       this._weight = val;
     } else {
@@ -216,6 +239,9 @@ export class Item {
    */
   getCenterAngle() {
     const angle = this._wheel.getItemAngles()[this.getIndex()];
+    if (!angle) {
+      throw new Error('Item not found in parent Wheel');
+    }
     return angle.start + (angle.end - angle.start) / 2;
   }
 
@@ -223,14 +249,22 @@ export class Item {
    * Get the angle (in degrees) that this item starts at (inclusive), ignoring the current `rotation` of the wheel.
    */
   getStartAngle() {
-    return this._wheel.getItemAngles()[this.getIndex()].start;
+    const angle = this._wheel.getItemAngles()[this.getIndex()];
+    if (!angle) {
+      throw new Error('Item not found in parent Wheel');
+    }
+    return angle.start;
   }
 
   /**
    * Get the angle (in degrees) that this item ends at (inclusive), ignoring the current `rotation` of the wheel.
    */
   getEndAngle() {
-    return this._wheel.getItemAngles()[this.getIndex()].end;
+    const angle = this._wheel.getItemAngles()[this.getIndex()];
+    if (!angle) {
+      throw new Error('Item not found in parent Wheel');
+    }
+    return angle.end;
   }
 
   /**

@@ -1,8 +1,10 @@
-export function register(wheel = {}) {
+import { Wheel } from './wheel.js';
+
+export function register(wheel: Wheel) {
   registerPointerEvents(wheel);
 
   // Listen for when the window is resized.
-  wheel._handler_onResize = (e) => wheel.resize(e);
+  wheel._handler_onResize = () => wheel.resize();
   window.addEventListener('resize', wheel._handler_onResize);
 
   // Listen for when window.devicePixelRatio changes.
@@ -27,37 +29,40 @@ export function register(wheel = {}) {
   listenForDevicePixelRatioChange();
 }
 
-export function unregister(wheel = {}) {
+export function unregister(wheel: Wheel) {
   const canvas = wheel.canvas;
 
-  if ('PointerEvent' in window) {
-    canvas.removeEventListener('pointerdown', wheel._handler_onPointerDown);
-    canvas.removeEventListener(
-      'pointermove',
-      wheel._handler_onPointerMoveRefreshCursor,
-    );
-  } else {
-    canvas.removeEventListener('touchstart', wheel._handler_onTouchStart);
-    canvas.removeEventListener('mousedown', wheel._handler_onMouseDown);
-    canvas.removeEventListener(
-      'mousemove',
-      wheel._handler_onMouseMoveRefreshCursor,
-    );
+  if (!!canvas) {
+    if ('PointerEvent' in window) {
+      canvas.removeEventListener('pointerdown', wheel._handler_onPointerDown);
+      canvas.removeEventListener(
+        'pointermove',
+        wheel._handler_onPointerMoveRefreshCursor,
+      );
+    } else {
+      canvas.removeEventListener('touchstart', wheel._handler_onTouchStart);
+      canvas.removeEventListener('mousedown', wheel._handler_onMouseDown);
+      canvas.removeEventListener(
+        'mousemove',
+        wheel._handler_onMouseMoveRefreshCursor,
+      );
+    }
   }
 
   window.removeEventListener('resize', wheel._handler_onResize);
-  wheel._mediaQueryList.removeEventListener(
+  wheel._mediaQueryList?.removeEventListener(
     'change',
     wheel._handler_onDevicePixelRatioChange,
   );
 }
 
-function registerPointerEvents(wheel = {}) {
+function registerPointerEvents(wheel: Wheel) {
   // Adapted from https://glitch.com/~jake-in-the-box
 
   const canvas = wheel.canvas;
+  if (!canvas) return;
 
-  wheel._handler_onPointerMoveRefreshCursor = (e = {}) => {
+  wheel._handler_onPointerMoveRefreshCursor = (e: PointerEvent) => {
     const point = {
       x: e.clientX,
       y: e.clientY,
@@ -66,7 +71,7 @@ function registerPointerEvents(wheel = {}) {
     wheel.refreshCursor();
   };
 
-  wheel._handler_onMouseMoveRefreshCursor = (e = {}) => {
+  wheel._handler_onMouseMoveRefreshCursor = (e: MouseEvent) => {
     const point = {
       x: e.clientX,
       y: e.clientY,
@@ -75,7 +80,7 @@ function registerPointerEvents(wheel = {}) {
     wheel.refreshCursor();
   };
 
-  wheel._handler_onPointerDown = (e = {}) => {
+  wheel._handler_onPointerDown = (e: PointerEvent) => {
     const point = {
       x: e.clientX,
       y: e.clientY,
@@ -92,7 +97,7 @@ function registerPointerEvents(wheel = {}) {
     canvas.addEventListener('pointercancel', onPointerUp);
     canvas.addEventListener('pointerout', onPointerUp);
 
-    function onPointerMove(e = {}) {
+    function onPointerMove(e: PointerEvent) {
       e.preventDefault();
       wheel.dragMove({
         x: e.clientX,
@@ -100,8 +105,10 @@ function registerPointerEvents(wheel = {}) {
       });
     }
 
-    function onPointerUp(e = {}) {
+    function onPointerUp(e: PointerEvent) {
       e.preventDefault();
+
+      if (!canvas) return;
       canvas.releasePointerCapture(e.pointerId);
       canvas.removeEventListener('pointermove', onPointerMove);
       canvas.removeEventListener('pointerup', onPointerUp);
@@ -111,7 +118,7 @@ function registerPointerEvents(wheel = {}) {
     }
   };
 
-  wheel._handler_onMouseDown = (e = {}) => {
+  wheel._handler_onMouseDown = (e: MouseEvent) => {
     const point = {
       x: e.clientX,
       y: e.clientY,
@@ -124,7 +131,7 @@ function registerPointerEvents(wheel = {}) {
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
 
-    function onMouseMove(e = {}) {
+    function onMouseMove(e: MouseEvent) {
       e.preventDefault();
       wheel.dragMove({
         x: e.clientX,
@@ -132,7 +139,7 @@ function registerPointerEvents(wheel = {}) {
       });
     }
 
-    function onMouseUp(e = {}) {
+    function onMouseUp(e: MouseEvent) {
       e.preventDefault();
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
@@ -140,10 +147,10 @@ function registerPointerEvents(wheel = {}) {
     }
   };
 
-  wheel._handler_onTouchStart = (e = {}) => {
+  wheel._handler_onTouchStart = (e: TouchEvent) => {
     const point = {
-      x: e.targetTouches[0].clientX,
-      y: e.targetTouches[0].clientY,
+      x: e.targetTouches[0]!.clientX,
+      y: e.targetTouches[0]!.clientY,
     };
 
     if (!wheel.isInteractive) return;
@@ -155,16 +162,18 @@ function registerPointerEvents(wheel = {}) {
     canvas.addEventListener('touchend', onTouchEnd);
     canvas.addEventListener('touchcancel', onTouchEnd);
 
-    function onTouchMove(e = {}) {
+    function onTouchMove(e: TouchEvent) {
       e.preventDefault();
       wheel.dragMove({
-        x: e.targetTouches[0].clientX,
-        y: e.targetTouches[0].clientY,
+        x: e.targetTouches[0]!.clientX,
+        y: e.targetTouches[0]!.clientY,
       });
     }
 
-    function onTouchEnd(e = {}) {
+    function onTouchEnd(e: TouchEvent) {
       e.preventDefault();
+
+      if (!canvas) return;
       canvas.removeEventListener('touchmove', onTouchMove);
       canvas.removeEventListener('touchend', onTouchEnd);
       canvas.removeEventListener('touchcancel', onTouchEnd);

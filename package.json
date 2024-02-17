@@ -1,6 +1,6 @@
 {
-  "name": "spin-wheel",
-  "version": "4.3.1",
+  "name": "spin-wheel-ts",
+  "version": "1.0.0-alpha.6",
   "description": "An easy to use, themeable component for randomising choices and prizes.",
   "keywords": [
     "spinner",
@@ -13,18 +13,13 @@
     "fortune"
   ],
   "type": "module",
-  "exports": {
-    "import": "./src/wheel.js",
-    "browser": "./dist/spin-wheel-esm.js",
-    "default": "./src/wheel.js"
-  },
+  "main": "dist/wheel.js",
+  "types": "dist/wheel.d.ts",
   "scripts": {
-    "start": "node scripts/build.js -entryPoint=src/wheel.js -servePath=examples/themes/",
-    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
+    "test": "npx jest",
     "lint": "eslint src examples scripts --fix",
-    "build": "npm run lint && npm run test && npm run build-esm && npm run build-iife",
-    "build-esm": "node scripts/build.js -entryPoint=src/wheel.js -esm",
-    "build-iife": "node scripts/build.js -entryPoint=src/wheel.js -iife"
+    "build": "rm -rf build && tsc --build .",
+    "prepublish": "pnpm run build"
   },
   "eslintConfig": {
     "env": {
@@ -213,23 +208,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CrazyTim/spin-wheel.git"
+    "url": "git+https://github.com/adrianso/spin-wheel-ts.git"
   },
-  "author": "CrazyTim",
+  "author": "Adrian So",
   "license": "MIT",
-  "homepage": "https://github.com/CrazyTim/spin-wheel#readme",
+  "homepage": "https://github.com/adrianso/spin-wheel-ts#readme",
   "engines": {
     "node": ">=14.8.0"
   },
   "devDependencies": {
     "browser-sync": "^2.27.5",
-    "esbuild": "^0.15.11",
     "eslint": "^8.25.0",
     "jest": "^27.4.3",
     "jest-canvas-mock": "^2.5.1",
-    "prettier": "^3.2.5"
-  },
-  "optionalDependencies": {
-    "canvas": "^2.11.2"
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
   }
 }

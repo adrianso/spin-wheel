@@ -1,4 +1,4 @@
-import {test, expect} from '@jest/globals';
+import { test, expect } from '@jest/globals';
 import * as util from '../src/util.js';
 
 test('degRad() works', () => {
@@ -35,7 +35,7 @@ test('aveArray() handles truthy/falsy values', () => {
     true,
     {},
     [],
-    i => {},
+    (i) => {},
     new Set(),
     new Map(),
     new Date(),
@@ -56,31 +56,25 @@ test('aveArray() handles truthy/falsy values', () => {
 test('getMouseButtonsPressed() works', () => {
   const f = util.getMouseButtonsPressed;
 
-  expect(f({buttons: 3})).toStrictEqual([1, 2]);
-  expect(f({buttons: 12})).toStrictEqual([4, 8]);
-  expect(f({buttons: 9})).toStrictEqual([1, 8]);
+  expect(f({ buttons: 3 })).toStrictEqual([1, 2]);
+  expect(f({ buttons: 12 })).toStrictEqual([4, 8]);
+  expect(f({ buttons: 9 })).toStrictEqual([1, 8]);
 });
 
 test('getDistanceBetweenPoints() works', () => {
   const f = util.getDistanceBetweenPoints;
 
-  expect(f(
-    {x: 0, y: 0},
-    {x: 0, y: 0}
-  )).toBe(0);
+  expect(f({ x: 0, y: 0 }, { x: 0, y: 0 })).toBe(0);
 
-  expect(f(
-    {x: 0, y: 0},
-    {x: 0, y: 0}
-  )).toBe(0);
+  expect(f({ x: 0, y: 0 }, { x: 0, y: 0 })).toBe(0);
 });
 
 test('isPointInCircle() works', () => {
   const f = util.isPointInCircle;
 
-  expect(f({x:0, y:0}, 0, 0, 0)).toBe(true);
-  expect(f({x:1, y:1}, 0, 0, 0)).toBe(false);
-  expect(f({x:1, y:1}, 0, 0, 5)).toBe(true);
+  expect(f({ x: 0, y: 0 }, 0, 0, 0)).toBe(true);
+  expect(f({ x: 1, y: 1 }, 0, 0, 0)).toBe(false);
+  expect(f({ x: 1, y: 1 }, 0, 0, 5)).toBe(true);
 });
 
 test('addAngle() works', () => {
@@ -119,7 +113,6 @@ test('isObject() works', () => {
   expect(f(null)).toBe(false);
 });
 
-
 test('calcWheelRotationForTargetAngle() works', () => {
   const f = util.calcWheelRotationForTargetAngle;
 
@@ -154,5 +147,4 @@ test('calcWheelRotationForTargetAngle() works', () => {
   expect(f(-90, 90, -1)).toBe(-90); // No change
   expect(f(-90, 180, -1)).toBe(-180);
   expect(f(-90, 270, -1)).toBe(-270);
-
 });

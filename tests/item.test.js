@@ -1,8 +1,8 @@
-import {test, expect} from '@jest/globals';
-import {Defaults} from '../src/constants.js';
-import {Item} from '../src/item.js';
-import {createWheel} from '../scripts/test.js';
-import {getInstanceProperties} from '../scripts/util.js';
+import { test, expect } from '@jest/globals';
+import { Defaults } from '../src/constants.js';
+import { Item } from '../src/item.js';
+import { createWheel } from '../scripts/test.js';
+import { getInstanceProperties } from '../scripts/util.js';
 
 test('Initial state is correct', () => {
   const wheel = createWheel();
@@ -24,7 +24,6 @@ test('Should throw when instantiated without wheel param', () => {
 });
 
 test('A default value exists for each property', () => {
-
   const wheel = createWheel({});
   const item = new Item(wheel);
   const setters = getInstanceProperties(item).setters;
@@ -32,11 +31,9 @@ test('A default value exists for each property', () => {
   for (const i of setters) {
     expect(Defaults.item[i]).not.toBe(undefined);
   }
-
 });
 
 test('Each property is given a default value when instantiated', () => {
-
   const wheel = createWheel();
   const item = new Item(wheel);
   const setters = getInstanceProperties(item).setters;
@@ -44,5 +41,4 @@ test('Each property is given a default value when instantiated', () => {
   for (const i of setters) {
     expect(item[i]).toEqual(Defaults.item[i]);
   }
-
 });
