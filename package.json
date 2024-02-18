@@ -1,6 +1,6 @@
 {
   "name": "spin-wheel-ts",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "description": "An easy to use, themeable component for randomising choices and prizes.",
   "keywords": [
     "spinner",

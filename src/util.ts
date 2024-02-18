@@ -204,8 +204,8 @@ export function setProp<T>({
   action?: () => T;
 }) {
   if (isValid) {
-    return action ? action() : !val ? defaultValue : val;
-  } else if (!val) {
+    return action ? action() : val === undefined ? defaultValue : val;
+  } else if (val === undefined) {
     return defaultValue;
   }
   throw new Error(errorMessage);
